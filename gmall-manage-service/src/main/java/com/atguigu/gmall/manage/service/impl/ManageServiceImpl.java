@@ -12,19 +12,22 @@ import java.util.List;
 public class ManageServiceImpl implements ManageService {
 
     @Autowired
-    BaseAttrInfoMapper baseAttrInfoMapper;
+    private BaseAttrInfoMapper baseAttrInfoMapper;
 
     @Autowired
-    BaseAttrValueMapper baseAttrValueMapper;
+    private BaseAttrValueMapper baseAttrValueMapper;
 
     @Autowired
-    BaseCatalog1Mapper baseCatalog1Mapper;
+    private BaseCatalog1Mapper baseCatalog1Mapper;
 
     @Autowired
-    BaseCatalog2Mapper baseCatalog2Mapper;
+    private BaseCatalog2Mapper baseCatalog2Mapper;
 
     @Autowired
-    BaseCatalog3Mapper baseCatalog3Mapper;
+    private BaseCatalog3Mapper baseCatalog3Mapper;
+
+    @Autowired
+    private SpuInfoMapper spuInfoMapper;
 
     @Override
     public List<BaseCatalog1> getCatalog1() {
@@ -99,6 +102,12 @@ public class ManageServiceImpl implements ManageService {
         List<BaseAttrValue> attrValueList = baseAttrValueMapper.select(baseAttrValue);
         baseAttrInfo.setAttrValueList(attrValueList);
         return baseAttrInfo;
+    }
+
+    @Override
+    public List<SpuInfo> getSpuInfoList(SpuInfo spuInfo) {
+        List<SpuInfo> spuInfoList = spuInfoMapper.select(spuInfo);
+        return spuInfoList;
     }
 
 
