@@ -48,7 +48,7 @@
             </div>
         </div>
 
-   <!--     <div th:include="spuSaleAttrPage"></div>-->
+        <div th:include="spuSaleAttrPage"></div>
 
     </form>
 </div>
@@ -58,11 +58,65 @@
     <a href="#" class="easyui-linkbutton" onclick="closeSpu()">关 闭</a>
 </div>
 <script type="text/javascript">
-/*    // 初始化
-    function addSpuInfo() {
-        // 调用初始化initSpuInfoDlg()方法
-        initSpuInfoDlg();
-    }*/
+    /*大保存*/
+    function saveSpu() {
+        //往后台传递saveInfo，创建json对象，在json对象中取值
+
+        var spuInfo = {};
+        spuInfo["id"]=$("#spuId").val();
+        spuInfo["spuName"]=$("#spuName").val();
+        spuInfo["description"] = $("#description").val();
+        spuInfo["catalog3Id"] = $("#ctg3ForSpuList").combobox('getValue');
+
+        //销售属性名 销售属性名里还有销售属性值
+        //取得销售属性中的所有列表的数据
+        var spuSaleAttrDgRows  = $("#spuSaleAttrDg").datagrid('getRows');
+        for (var i = 0; i < spuSaleAttrDgRows.length; i++) {
+            //添加销售属性名称数据
+            spuInfo["spuSaleAttrList["+i+"].id"]=spuSaleAttrDgRows[i].id;
+            spuInfo["spuSaleAttrList["+i+"].saleAttrId"]=spuSaleAttrDgRows[i].saleAttrId;
+            spuInfo["spuSaleAttrList["+i+"].saleAttrName"]=spuSaleAttrDgRows[i].saleAttrName;
+
+            //处理销售属性值数据
+            var saleAttrValueRows = spuSaleAttrDgRows[i].spuSaleAttrValueJson.rows;
+            //循环遍历销售属性值,赋值  spuSaleAttrValueList：表示一个集合  saleAtrrId ：？
+            for (var j = 0; j < saleAttrValueRows.length; j++) {
+                //销售属性值中的saleAttrId=销售属性名的saleAtteId
+                spuInfo["spuSaleAttrList[" + i + "].spuSaleAttrValueList[" + j + "].id"] = saleAttrValueRows[j].id;
+                spuInfo["spuSaleAttrList[" + i + "].spuSaleAttrValueList[" + j + "].saleAttrValueName"] = saleAttrValueRows[j].saleAttrValueName;
+                spuInfo["spuSaleAttrList[" + i + "].spuSaleAttrValueList[" + j + "].saleAttrId"] = spuSaleAttrDgRows[i].saleAttrId;
+
+
+            }
+
+        }
+
+
+        //图片列表
+        //取得datagrid内所有图片信息
+        var spuImgDgRows  = $("#spuImgDg").datagrid("getRows");
+        //循环遍历数组 itar 表示普通for循环  iter 表示增强for
+        //spuInfo["spuImageLIst["+i]
+        for (var i = 0; i < spuImgDgRows.length; i++) {
+      //      var obj = array[i];
+            spuInfo["spuImageLIst["+i+"].imgName"]=spuImgDgRows[i].imgName;
+            spuInfo["spuImageList["+i+"].imgUrl"]=spuImgDgRows[i].imgUrl;
+
+        }
+
+        //将spuInfo对象打印到控制台
+        console.log(JSON.stringify(spuInfo));
+
+        $.post("saveSpuInfo",spuInfo,function (data) {
+            // 关闭模态框
+            $("#spu_dlg").dialog("close");
+            // 重新加载数据
+            $("#spulist_dg").datagrid("reload");
+        })
+
+
+    }
+
 
 // js语言  传入spuInfo 是为了做编辑使用。
     function initSpuInfoDlg(spuInfo){
@@ -212,8 +266,6 @@ function initUploader(){
                 row:{imgUrl:response._raw}
             });
     });
-
-
     $('#spuImgUploadBtn').click(function(){
         console.log("开始上传");
         if(spuImgUploader.getFiles().length<=0){
@@ -237,8 +289,15 @@ function initSpuSaleAttrListDatagrid(spuId){
             { field:'spuSaleAttrValueJson',title:'销售属性值暂存', width:'50%'}
         ]]
     });
+}
 
 
+
+/*初始化销售属性*/
+function addSpuSaleAttr(){
+
+    /!*初始化页面*!/
+    initSpuSaleAttrDlg();
 }
 
 
